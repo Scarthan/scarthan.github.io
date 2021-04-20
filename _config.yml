@@ -23,7 +23,7 @@ email: N@thans.biz
 description: >- # this means to ignore newlines until "baseurl:"
   Site, blog, rantings, opinions, code, etc.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://www.thans.biz" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: 3DG_NCollins
 github_username:  Scarthan
 
