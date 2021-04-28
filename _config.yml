@@ -35,6 +35,7 @@ social:
 social_media:
   - { media_name: GitHub, fa_icon: fa-github-square, profile_link: "https://github.com/Scarthan" }
   - { media_name: LinkedIn, fa_icon: fa-linkedin-square, profile_link: "https://www.linkedin.com/in/nathan-c-b4a13620" }
+  - { media_name: Twitter, fa_icon: fa-twitter-square, profile_link: "https://twitter.com/3DG_NCollins"}
 
 
 twitter_username: 3DG_NCollins
