@@ -43,9 +43,14 @@ google_analytics: UA-81011900-1
 timezone: America/Chicago
 
 # Build settings
+post_navigation: true
+paginate: 8
+paginate_path: "blog/page:num"
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-paginate
+  - jekyll-seo-tag
 
 # Exclude from processing.
 # The following items will not be processed, by default.
