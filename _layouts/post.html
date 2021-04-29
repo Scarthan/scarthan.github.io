@@ -29,7 +29,12 @@ layout: default
   <div class="post-content e-content" itemprop="articleBody">
     {{ content }}
   </div>
-  
+
+<!-- Post navigation -->
+{% if site.post_navigation  or site.theme_settings.post_navigation %}
+  {% include post_nav.html %}
+{% endif %}
+
   {% if page.comments == true and site.disqus.shortname %}
     {% include disqus.html %}
   {% endif %}
