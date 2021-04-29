@@ -1,0 +1,46 @@
+---
+layout: post
+title:  "RSS Feed Reading With Powershell"
+date:   2021-04-28 20:20:13 -0500
+categories: powershell rss atom xml
+tags: [atom, rss, xml, powershell]
+excerpt: Requesting Atom or Rss feeds with powershell and parsing the returned data.
+---
+
+One of the first things I ever learned to program was an RSS reader. I copied C++ code from a website and wrote a terrible feed parser that failed to load just about anything I threw at it. Today we can take an easier approach using powershell.
+
+
+```powershell
+# let's request the xml data for the feed of this site (icon in the top right has a link to this feed)
+invoke-webrequest -uri https://www.thans.biz/feed.xml
+```
+
+This is pretty cool as we can get a response from this site but within the response we have a content object that actually contains the data returned from the web request.
+
+```powershell
+# Let's make the request and output the raw xml of the feed
+(invoke-webrequest -uri https://www.thans.biz/feed.xml).Content
+```
+
+Okay, so we can use an accessor to select the content from the request but it's difficult to read or parse like this. On to the next step:
+
+```powershell
+# Make the request and cast the data to a variable that is an xml object
+[xml]$data = (invoke-webrequest -uri https://www.thans.biz/feed.xml).Content
+```
+
+Notice the variable "$data" is preceded by "[xml]" this assigns the variable as an xml object. The variable is assigned the content property from the result of what happens within the parenthesis. From this we can explore the "$data" variable and loop over the posts that are returned:
+
+```powershell
+ForEach ($msg in $data.feed.entry){
+    [PSCustomObject]@{
+        'LastUpdated' = [datetime]$msg.updated
+        'Description' = $msg.summary."#text"
+        'Category' = $msg.category.term
+        'Author' = $msg.author.name
+        'Link' = $msg.link.href
+    }
+}
+```
+
+This will output the posts with some additional data and serves as a good reminder I should modify my post URL's and summary text for rss feed readers.
