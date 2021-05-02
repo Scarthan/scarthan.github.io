@@ -5,6 +5,7 @@ date:   2021-04-25 07:10:00 -0500
 categories: vscode powershell
 tags: [vscode, powershell]
 excerpt: Setting the default file type in VS Code to Powershell with Powershell.
+permalink: "/vscode-settings/"
 ---
 
 I really like VS Code and more often than not when I am opening it I am creating some snippet of powershell to share and I want the IDE functions VS Code makes available. When you open VS Code the default file type is a blank txt file. This can be less than ideal if you work in one language most of the time. SQLDBAwithTheBeard already has a great post about the GUI methods available for modifying the default file type so I thought I would share my method of doing it from powershell.
