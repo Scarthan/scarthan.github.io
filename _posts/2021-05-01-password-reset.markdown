@@ -2,7 +2,7 @@
 layout: post
 title:  "Never reset my password."
 date:   2021-05-01 18:09:03 -0500
-categories: Password, Security
+categories: Password Security
 tags: [Password, Security]
 excerpt: Never reset a password for any of my accounts.
 permalink: "/password-reset/"
