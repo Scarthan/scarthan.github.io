@@ -2,6 +2,7 @@
 layout: post
 title:  "Super Paste"
 date:   2022-05-18 06:00:00 -0500
+comments: false
 categories: windows powershell virtualization
 tags: [windows, powershell, copy paste, virtualization]
 excerpt: Using paste where you can't sync the Windows clipboard.
