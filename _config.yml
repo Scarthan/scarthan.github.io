@@ -44,18 +44,6 @@ github_username:  Scarthan
 google_analytics: UA-81011900-1
 timezone: America/Chicago
 
-disqus:
-  shortname: thans
-
-defaults:
-    -
-      scope:
-        path: ""
-        type: "posts"
-      values:
-        layout: "post"
-        comments: true 
-
 # Build settings
 post_navigation: true
 paginate: 8
