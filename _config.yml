@@ -53,6 +53,11 @@ plugins:
   - jekyll-feed
   - jekyll-paginate
   - jekyll-seo-tag
+  - jekyll/mastodon_webfinger
+
+mastodon:
+  username: figcatchingraptor
+  instance: infosec.exchange
 
 # Exclude from processing.
 # The following items will not be processed, by default.
