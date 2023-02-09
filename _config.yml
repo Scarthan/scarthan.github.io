@@ -67,6 +67,9 @@ mastodon:
 # Excluded items can be processed by explicitly listing the directories or
 # their entries' file path in the `include:` list.
 #
+include:
+  - .well-known
+  - Bimi.svg
 # exclude:
 #   - .sass-cache/
 #   - .jekyll-cache/
