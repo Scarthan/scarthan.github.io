@@ -2,6 +2,7 @@
 layout: post
 title:  "VS Code on Android"
 date:   2021-05-18 06:10:00 -0500
+comments: false
 categories: vscode android
 tags: [vscode, android]
 excerpt: Running VSCode on Android.
