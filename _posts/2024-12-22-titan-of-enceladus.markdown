@@ -61,5 +61,3 @@ And then it was over. The Titan, its energy spent, collapsed back onto the icy s
 Years later, Amani returned to Enceladus, now a protected site. The Titan remained where it had fallen, a colossal monument to the unknown. Some said it was a warning, others a promise. For Amani, it was a question—a reminder that humanity was not the first to look to the stars for salvation.
 
 And perhaps, one day, it would not be the last.
-
-This format makes the story ready for a blog post, with a relative link to the image in the assets directory.
