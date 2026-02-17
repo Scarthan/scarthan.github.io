@@ -17,7 +17,7 @@
             {% if site.email %}
             <li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>
             <li>
-              <a rel="me" href="https://infosec.exchange/@figcatchingraptor">Mastodon</a>
+              <a rel="me" href="https://infosec.exchange/@figcatchingraptor"><span class="icon"><i class="fa-brands fa-mastodon"></i></span> Mastodon</a>
             </li>
             {% endif %}
         </ul>
@@ -27,7 +27,7 @@
         <ul class="social-media-list">
           {% for media in site.social_media %}
           <li>
-            <a rel="nofollow" target="_blank" href="{{ media.profile_link }}"><span class="icon"><i class="fa {{ media.fa_icon }}"></i></span><span class="username">&nbsp;{{ media.media_name }}</span></a>
+            <a rel="nofollow" target="_blank" href="{{ media.profile_link }}"><span class="icon"><i class="{{ media.fa_icon }}"></i></span><span class="username">&nbsp;{{ media.media_name }}</span></a>
           </li>
           {% endfor %}
         </ul>
