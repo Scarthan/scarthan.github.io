@@ -53,6 +53,7 @@ plugins:
   - jekyll-paginate
   - jekyll-seo-tag
   - jekyll/mastodon_webfinger
+  - jekyll-sitemap
 
 mastodon:
   username: figcatchingraptor

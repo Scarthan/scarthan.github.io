@@ -1,0 +1,23 @@
+<div class="share-buttons">
+  <p>Share this post:</p>
+  <a href="https://twitter.com/intent/tweet?text={{ page.title | url_encode }}&url={{ site.url }}{{ page.url }}" target="_blank" rel="nofollow" title="Share on Twitter"><i class="fa fa-twitter-square"></i> Twitter</a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ site.url }}{{ page.url }}&title={{ page.title | url_encode }}" target="_blank" rel="nofollow" title="Share on LinkedIn"><i class="fa fa-linkedin-square"></i> LinkedIn</a>
+  <a href="https://mastodonshare.com/?text={{ page.title | url_encode }}%20{{ site.url }}{{ page.url }}" target="_blank" rel="nofollow" title="Share on Mastodon"><i class="fa fa-share-alt"></i> Mastodon</a>
+</div>
+
+<style>
+.share-buttons {
+  margin: 2em 0;
+  padding: 1em;
+  border-top: 1px solid #eee;
+}
+.share-buttons a {
+  margin-right: 1em;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+.share-buttons p {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+</style>
