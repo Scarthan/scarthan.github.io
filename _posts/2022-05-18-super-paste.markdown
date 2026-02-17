@@ -16,7 +16,13 @@ Start-Sleep -Seconds 2
 
 $clip = Get-Clipboard
 
-$var = $clip.ToCharArray() | ForEach-Object {if($_ -match "['^''.''+''%''~''('')'\]\['{''}']"){$r = "{" + $_ + "}";$_ -replace "['^''.''+''%''~''('')'\]\['{''}']",$r}else{$_}}
+$var = $clip.ToCharArray() | ForEach-Object {
+    if($_ -match "['^''.''+''%''~''('')'\]\['{''}']"){
+        $r = "{" + $_ + "}";$_ -replace "['^''.''+''%''~''('')'\]\['{''}']",$r
+    }else{
+        $_
+    }
+}
 
 $wshell = New-Object -ComObject wscript.shell
 
