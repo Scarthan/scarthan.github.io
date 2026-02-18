@@ -22,4 +22,15 @@ layout: default
 
   <p><strong>Page not found :(</strong></p>
   <p>NEVER pick up a Duck in a Dungeon…</p>
+
+  <hr>
+  
+  <h3>While you're here, check out some recent posts:</h3>
+  <ul style="list-style: none; padding: 0;">
+    {% for post in site.posts limit:5 %}
+      <li>
+        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
 </div>

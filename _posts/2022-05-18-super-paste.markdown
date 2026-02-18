@@ -33,7 +33,7 @@ This script will pause for two seconds which is needed because we have to invoke
 
 The next script is a batch file so that we can create a shortcut to it that'll just run the powershell script:
 
-```cmd
+```batch
 Powershell.exe -executionpolicy bypass -noprofile -file "C:\Users\USERNAME\Documents\paste.ps1"
 ```
 

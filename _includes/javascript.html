@@ -1,24 +1,74 @@
-<!-- This file is referenced in one of my posts for demo purposes, and you most likely do not need it. -->
+<script src="https://unpkg.com/simple-jekyll-search@latest/dest/simple-jekyll-search.min.js"></script>
+
 <script>
-    function domReady() {
-        var toc = document.getElementById('markdown-toc');
-        if (toc) {
-            toc.insertAdjacentHTML('beforebegin', '<p><strong>Table of contents</strong></p>');
-        }
+// Search Initialization
+window.simpleJekyllSearch = new SimpleJekyllSearch({
+  searchInput: document.getElementById('search-input'),
+  resultsContainer: document.getElementById('results-container'),
+  json: '{{ "/search.json" | relative_url }}',
+  searchResultTemplate: '<li><a href="{url}">{title}</a><small>{date}</small></li>',
+  noResultsText: '<li>No results found</li>',
+  limit: 10,
+  fuzzy: false
+});
+
+// Theme Toggle
+const toggle = document.getElementById('theme-toggle');
+const icon = toggle.querySelector('i');
+const currentTheme = localStorage.getItem('theme');
+
+if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    if (currentTheme === 'dark') {
+        icon.classList.replace('fa-moon', 'fa-sun');
+    }
+}
+
+toggle.addEventListener('click', () => {
+    let theme = document.documentElement.getAttribute('data-theme');
+    if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+        icon.classList.replace('fa-sun', 'fa-moon');
+    } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        icon.classList.replace('fa-moon', 'fa-sun');
+    }
+});
+
+document.querySelectorAll('pre.highlight').forEach(function (codeBlock) {
+    var button = document.createElement('button');
+    button.className = 'copy-code-button';
+    button.type = 'button';
+    button.innerText = 'Copy';
+
+    button.addEventListener('click', function () {
+        var code = codeBlock.querySelector('code').innerText;
+        navigator.clipboard.writeText(code).then(function () {
+            button.blur();
+            button.innerText = 'Copied!';
+            setTimeout(function () {
+                button.innerText = 'Copy';
+            }, 2000);
+        }, function (error) {
+            button.innerText = 'Error';
+        });
+    });
+
+    var container = document.createElement('div');
+    container.className = 'code-header';
+    
+    // If you want to show the language name:
+    var lang = codeBlock.parentElement.className.split(' ').find(c => c.startsWith('language-'));
+    if (lang) {
+        var langSpan = document.createElement('span');
+        langSpan.className = 'code-language';
+        langSpan.innerText = lang.replace('language-', '').toUpperCase();
+        container.appendChild(langSpan);
     }
 
-    if ( document.addEventListener ) { // Mozilla, Opera, Webkit
-        document.addEventListener( 'DOMContentLoaded', function() {
-            document.removeEventListener( 'DOMContentLoaded', arguments.callee, false);
-            domReady();
-        }, false );
-    } else if ( document.attachEvent ) { // If IE event model is used
-        // ensure firing before onload
-        document.attachEvent('onreadystatechange', function() {
-            if ( document.readyState === 'complete' ) {
-                document.detachEvent( 'onreadystatechange', arguments.callee );
-                domReady();
-            }
-        });
-    }
+    container.appendChild(button);
+    codeBlock.parentNode.insertBefore(container, codeBlock);
+});
 </script>
