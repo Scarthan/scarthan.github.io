@@ -1,23 +1,21 @@
-<div class="share-buttons">
+<div class="share-buttons" aria-label="Share this post">
   <p>Share this post:</p>
-  <a href="https://twitter.com/intent/tweet?text={{ page.title | url_encode }}&url={{ site.url }}{{ page.url }}" target="_blank" rel="nofollow" title="Share on Twitter"><i class="fa-brands fa-x-twitter"></i> Twitter</a>
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ site.url }}{{ page.url }}&title={{ page.title | url_encode }}" target="_blank" rel="nofollow" title="Share on LinkedIn"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
-  <a href="https://mastodonshare.com/?text={{ page.title | url_encode }}%20{{ site.url }}{{ page.url }}" target="_blank" rel="nofollow" title="Share on Mastodon"><i class="fa-brands fa-mastodon"></i> Mastodon</a>
+  {% assign share_url = page.url | absolute_url | url_encode %}
+  <a href="https://twitter.com/intent/tweet?text={{ page.title | url_encode }}&url={{ share_url }}" target="_blank" rel="nofollow noopener noreferrer" title="Share on X">
+    {% include social-icon.html platform="twitter" %}
+    <span>X</span>
+  </a>
+  <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ share_url }}" target="_blank" rel="nofollow noopener noreferrer" title="Share on LinkedIn">
+    {% include social-icon.html platform="linkedin" %}
+    <span>LinkedIn</span>
+  </a>
+  <a href="https://mastodonshare.com/?text={{ page.title | append: ' ' | url_encode }}{{ share_url }}" target="_blank" rel="nofollow noopener noreferrer" title="Share on Mastodon">
+    {% include social-icon.html platform="mastodon" %}
+    <span>Mastodon</span>
+  </a>
+  {% capture bluesky_text %}{{ page.title }} {{ page.url | absolute_url }}{% endcapture %}
+  <a href="https://bsky.app/intent/compose?text={{ bluesky_text | strip | url_encode }}" target="_blank" rel="nofollow noopener noreferrer" title="Share on Bluesky">
+    {% include social-icon.html platform="bluesky" %}
+    <span>Bluesky</span>
+  </a>
 </div>
-
-<style>
-.share-buttons {
-  margin: 2em 0;
-  padding: 1em;
-  border-top: 1px solid #eee;
-}
-.share-buttons a {
-  margin-right: 1em;
-  text-decoration: none;
-  font-size: 0.9em;
-}
-.share-buttons p {
-  font-weight: bold;
-  margin-bottom: 0.5em;
-}
-</style>

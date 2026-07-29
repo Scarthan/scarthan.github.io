@@ -22,26 +22,36 @@ title: Anything and nothing
 email: N@thans.biz
 description: >- # this means to ignore newlines until "baseurl:"
   Blogs, rants, opinions, code, etc.
+lang: en
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://www.thans.biz" # the base hostname & protocol for your site, e.g. http://example.com
 author: Nathan Collins
 logo: /assets/favicon.png
 social:
   name: Nathan Collins
-  image: /assets/site-social-image.png
   links:
     - https://github.com/Scarthan
     - https://www.linkedin.com/in/nathan-c-b4a13620
 
 social_media:
-  - { media_name: GitHub, fa_icon: fa-brands fa-github, profile_link: "https://github.com/Scarthan" }
-  - { media_name: LinkedIn, fa_icon: fa-brands fa-linkedin, profile_link: "https://www.linkedin.com/in/nathan-c-b4a13620" }
-  - { media_name: Twitter, fa_icon: fa-brands fa-x-twitter, profile_link: "https://twitter.com/3DG_NCollins"}
+  - { media_name: GitHub, platform: github, profile_link: "https://github.com/Scarthan" }
+  - { media_name: LinkedIn, platform: linkedin, profile_link: "https://www.linkedin.com/in/nathan-c-b4a13620" }
+  - { media_name: Twitter, platform: twitter, profile_link: "https://twitter.com/3DG_NCollins"}
+  - { media_name: Bluesky, platform: bluesky, profile_link: "https://bsky.app/profile/na.thans.biz"}
 
 
 twitter_username: 3DG_NCollins
 github_username:  Scarthan
 timezone: America/Chicago
+header_pages:
+  - tags.html
+  - terminal.markdown
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      image: /assets/site-social-image.jpg
 
 # Build settings
 post_navigation: true
@@ -52,7 +62,6 @@ plugins:
   - jekyll-feed
   - jekyll-paginate
   - jekyll-seo-tag
-  - jekyll/mastodon_webfinger
   - jekyll-sitemap
 
 mastodon:
@@ -70,14 +79,15 @@ mastodon:
 include:
   - .well-known
   - Bimi.svg
-# exclude:
-#   - .sass-cache/
-#   - .jekyll-cache/
-#   - gemfiles/
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules/
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
+exclude:
+  - .DS_Store
+  - "**/.DS_Store"
+  - .github/
+  - .lighthouseci/
+  - scripts/
+  - Gemfile
+  - Gemfile.lock
+  - lighthouserc.json
+  - README.md
+  - vendor/
 #   - vendor/ruby/

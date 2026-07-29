@@ -1,74 +1,189 @@
-<script src="https://unpkg.com/simple-jekyll-search@latest/dest/simple-jekyll-search.min.js"></script>
-
 <script>
-// Search Initialization
-window.simpleJekyllSearch = new SimpleJekyllSearch({
-  searchInput: document.getElementById('search-input'),
-  resultsContainer: document.getElementById('results-container'),
-  json: '{{ "/search.json" | relative_url }}',
-  searchResultTemplate: '<li><a href="{url}">{title}</a><small>{date}</small></li>',
-  noResultsText: '<li>No results found</li>',
-  limit: 10,
-  fuzzy: false
-});
+(function () {
+  'use strict';
 
-// Theme Toggle
-const toggle = document.getElementById('theme-toggle');
-const icon = toggle.querySelector('i');
-const currentTheme = localStorage.getItem('theme');
+  var searchInput = document.getElementById('search-input');
+  var resultsContainer = document.getElementById('results-container');
+  var searchStatus = document.getElementById('search-status');
+  var searchIndex = [];
 
-if (currentTheme) {
-    document.documentElement.setAttribute('data-theme', currentTheme);
-    if (currentTheme === 'dark') {
-        icon.classList.replace('fa-moon', 'fa-sun');
+  function setSearchStatus(message) {
+    searchStatus.textContent = message;
+  }
+
+  function renderSearchResults(results) {
+    resultsContainer.replaceChildren();
+
+    if (!searchInput.value.trim()) {
+      resultsContainer.hidden = true;
+      setSearchStatus('');
+      return;
     }
-}
 
-toggle.addEventListener('click', () => {
-    let theme = document.documentElement.getAttribute('data-theme');
-    if (theme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
-        icon.classList.replace('fa-sun', 'fa-moon');
-    } else {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-        icon.classList.replace('fa-moon', 'fa-sun');
+    if (!results.length) {
+      var emptyItem = document.createElement('li');
+      emptyItem.textContent = 'No results found';
+      resultsContainer.appendChild(emptyItem);
+      resultsContainer.hidden = false;
+      setSearchStatus('No results found');
+      return;
     }
-});
 
-document.querySelectorAll('pre.highlight').forEach(function (codeBlock) {
+    results.forEach(function (post) {
+      var item = document.createElement('li');
+      var link = document.createElement('a');
+      var date = document.createElement('small');
+
+      link.href = post.url;
+      link.textContent = post.title;
+      date.textContent = post.date;
+      item.append(link, date);
+      resultsContainer.appendChild(item);
+    });
+
+    resultsContainer.hidden = false;
+    setSearchStatus(results.length + (results.length === 1 ? ' result' : ' results'));
+  }
+
+  fetch('{{ "/search.json" | relative_url }}')
+    .then(function (response) {
+      if (!response.ok) throw new Error('Search index unavailable');
+      return response.json();
+    })
+    .then(function (posts) {
+      searchIndex = posts;
+    })
+    .catch(function () {
+      searchInput.disabled = true;
+      searchInput.placeholder = 'Search unavailable';
+      setSearchStatus('Search is temporarily unavailable');
+    });
+
+  searchInput.addEventListener('input', function () {
+    var query = searchInput.value.trim().toLocaleLowerCase();
+    if (!query) {
+      renderSearchResults([]);
+      return;
+    }
+
+    var matches = searchIndex.filter(function (post) {
+      return [post.title, post.category, post.tags, post.excerpt]
+        .filter(Boolean)
+        .join(' ')
+        .toLocaleLowerCase()
+        .includes(query);
+    }).slice(0, 10);
+
+    renderSearchResults(matches);
+  });
+
+  searchInput.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      searchInput.value = '';
+      renderSearchResults([]);
+    }
+
+    if (event.key === 'ArrowDown' && !resultsContainer.hidden) {
+      var firstResult = resultsContainer.querySelector('a');
+      if (firstResult) {
+        event.preventDefault();
+        firstResult.focus();
+      }
+    }
+  });
+
+  resultsContainer.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      searchInput.focus();
+      searchInput.value = '';
+      renderSearchResults([]);
+      return;
+    }
+
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+
+    var links = Array.from(resultsContainer.querySelectorAll('a'));
+    var currentIndex = links.indexOf(document.activeElement);
+    if (currentIndex === -1) return;
+
+    event.preventDefault();
+    var nextIndex = event.key === 'ArrowDown'
+      ? Math.min(currentIndex + 1, links.length - 1)
+      : Math.max(currentIndex - 1, 0);
+    links[nextIndex].focus();
+  });
+
+  var toggle = document.getElementById('theme-toggle');
+  var themeLabel = toggle.querySelector('.theme-label');
+
+  function updateThemeButton() {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    toggle.setAttribute('aria-pressed', String(isDark));
+    themeLabel.textContent = isDark ? 'Use light mode' : 'Use dark mode';
+  }
+
+  updateThemeButton();
+  toggle.addEventListener('click', function () {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var nextTheme = isDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', nextTheme);
+    localStorage.setItem('theme', nextTheme);
+    updateThemeButton();
+  });
+
+  var navToggle = document.getElementById('nav-toggle');
+  var navLinks = document.getElementById('nav-links');
+
+  navToggle.addEventListener('click', function () {
+    var isOpen = navToggle.getAttribute('aria-expanded') === 'true';
+    navToggle.setAttribute('aria-expanded', String(!isOpen));
+    navLinks.classList.toggle('is-open', !isOpen);
+  });
+
+  navLinks.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      navLinks.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.focus();
+    }
+  });
+
+  document.querySelectorAll('pre.highlight').forEach(function (codeBlock) {
+    var code = codeBlock.querySelector('code');
+    if (!code) return;
+
     var button = document.createElement('button');
     button.className = 'copy-code-button';
     button.type = 'button';
-    button.innerText = 'Copy';
+    button.textContent = 'Copy';
+    button.setAttribute('aria-label', 'Copy code to clipboard');
 
     button.addEventListener('click', function () {
-        var code = codeBlock.querySelector('code').innerText;
-        navigator.clipboard.writeText(code).then(function () {
-            button.blur();
-            button.innerText = 'Copied!';
-            setTimeout(function () {
-                button.innerText = 'Copy';
-            }, 2000);
-        }, function (error) {
-            button.innerText = 'Error';
-        });
+      navigator.clipboard.writeText(code.innerText).then(function () {
+        button.textContent = 'Copied!';
+        window.setTimeout(function () {
+          button.textContent = 'Copy';
+        }, 2000);
+      }).catch(function () {
+        button.textContent = 'Copy failed';
+      });
     });
 
     var container = document.createElement('div');
     container.className = 'code-header';
-    
-    // If you want to show the language name:
-    var lang = codeBlock.parentElement.className.split(' ').find(c => c.startsWith('language-'));
-    if (lang) {
-        var langSpan = document.createElement('span');
-        langSpan.className = 'code-language';
-        langSpan.innerText = lang.replace('language-', '').toUpperCase();
-        container.appendChild(langSpan);
+
+    var languageClass = Array.from(codeBlock.parentElement.classList)
+      .find(function (className) { return className.startsWith('language-'); });
+
+    if (languageClass) {
+      var language = document.createElement('span');
+      language.className = 'code-language';
+      language.textContent = languageClass.replace('language-', '').toUpperCase();
+      container.appendChild(language);
     }
 
     container.appendChild(button);
     codeBlock.parentNode.insertBefore(container, codeBlock);
-});
+  });
+}());
 </script>

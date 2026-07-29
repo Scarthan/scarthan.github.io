@@ -17,8 +17,10 @@ permalink: /terminal/
         </div>
         <div class="terminal-input-line">
             <span id="terminal-prompt" class="terminal-prompt">PS C:\Users\Guest></span>
-            <input type="text" id="terminal-input" autofocus spellcheck="false" autocomplete="off">
+            <label class="sr-only" for="terminal-input">Terminal command</label>
+            <input type="text" id="terminal-input" spellcheck="false" autocomplete="off" aria-describedby="terminal-help">
         </div>
+        <p id="terminal-help" class="sr-only">Enter Get-Help for available commands. Use the up and down arrows for command history.</p>
     </div>
 </div>
 
@@ -32,6 +34,7 @@ permalink: /terminal/
     overflow: hidden;
     margin: 2rem 0;
     border: 1px solid #005fb8;
+    font-size: 0.95rem;
 }
 
 .terminal-header {
@@ -67,6 +70,22 @@ permalink: /terminal/
     flex-direction: column;
 }
 
+@media screen and (max-width: 600px) {
+    .terminal-body {
+        height: 320px;
+        padding-inline: 10px;
+    }
+
+    .terminal-input-line {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .terminal-prompt {
+        margin-right: 0;
+    }
+}
+
 .terminal-output {
     white-space: pre-wrap;
     word-break: break-word;
@@ -85,8 +104,9 @@ permalink: /terminal/
     color: #ffbd2e !important;
     padding: 0 !important;
     margin: 0 !important;
-    font-size: 0.55rem;
+    font-size: clamp(0.7rem, 2vw, 0.8rem);
     line-height: 1.0;
+    overflow-x: auto;
 }
 
 .terminal-input-line {
@@ -107,7 +127,6 @@ permalink: /terminal/
     font-family: inherit;
     font-size: inherit;
     width: 100%;
-    outline: none;
 }
 
 .cmd-out-help { color: #27c93f; }
@@ -256,20 +275,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (cmd && commandInfo[cmd]) {
                     return 'NAME\n    ' + cmd + '\n\nSYNOPSIS\n    ' + commandInfo[cmd].synopsis + '\n\nDESCRIPTION\n    ' + commandInfo[cmd].description;
                 }
-                return '<span class="cmd-out-error">Get-Help : Help not found for command \'' + target + '\'.</span>';
+                return 'Get-Help : Help not found for command \'' + target + '\'.';
             }
             return 'Available commands:\n' +
-                   '  <span class="cmd-out-help">Set-Location</span> (cd)  - Change directory / Navigate to post\n' +
-                   '  <span class="cmd-out-help">Get-ChildItem</span> (ls)  - List contents\n' +
-                   '  <span class="cmd-out-help">Get-Content</span> (cat)    - Read file/post content\n' +
-                   '  <span class="cmd-out-help">Get-Location</span> (pwd)  - Current path\n' +
-                   '  <span class="cmd-out-help">Get-Command</span> (gcm)    - List commands\n' +
-                   '  <span class="cmd-out-help">Get-History</span> (history) - Command history\n' +
-                   '  <span class="cmd-out-help">Get-MOTD</span> (motd)      - Show welcome art\n' +
-                   '  <span class="cmd-out-help">Clear-Host</span> (cls)     - Clear screen\n' +
-                   '  <span class="cmd-out-help">Get-Date</span>            - Current date\n' +
-                   '  <span class="cmd-out-help">Get-WhoAmI</span> (whoami)    - User info\n' +
-                   '  <span class="cmd-out-help">Exit</span>                - Return to home';
+                   '  Set-Location (cd)  - Change directory / Navigate to post\n' +
+                   '  Get-ChildItem (ls)  - List contents\n' +
+                   '  Get-Content (cat)    - Read file/post content\n' +
+                   '  Get-Location (pwd)  - Current path\n' +
+                   '  Get-Command (gcm)    - List commands\n' +
+                   '  Get-History (history) - Command history\n' +
+                   '  Get-MOTD (motd)      - Show welcome art\n' +
+                   '  Clear-Host (cls)     - Clear screen\n' +
+                   '  Get-Date            - Current date\n' +
+                   '  Get-WhoAmI (whoami)    - User info\n' +
+                   '  Exit                - Return to home';
         },
         'Get-Command': (args) => {
             const target = args[0];
@@ -278,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (cmd) {
                     return 'CommandType     Name\n-----------     ----\nCmdlet          ' + cmd;
                 }
-                return '<span class="cmd-out-error">Get-Command : The term \'' + target + '\' is not recognized.</span>';
+                return 'Get-Command : The term \'' + target + '\' is not recognized.';
             }
             let output = 'CommandType     Name\n-----------     ----\n';
             Object.keys(commands).sort().forEach(c => {
@@ -292,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'Get-Location': () => currentDir,
         'Get-WhoAmI': () => 'nathan-collins\\guest\nI am an IT generalist and practitioner in all regards. I really enjoy infrastructure as code, automation, iot, networking, information security, etc.',
         'Get-Date': () => new Date().toString(),
-        'Clear-Host': () => { output.innerHTML = ''; return ''; },
+        'Clear-Host': () => { output.replaceChildren(); return ''; },
         'Get-MOTD': () => getMotdHtml(),
         'Get-History': () => history.map((cmd, i) => '  ' + (i + 1) + '  ' + cmd).join('\n'),
         'Exit': () => { window.location.href = '{{ "/" | relative_url }}'; return 'Redirecting...'; },
@@ -303,12 +322,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return fs[target].children.map(child => {
                     const fullChildPath = (target === 'C:' ? 'C:\\' : target + '\\') + child;
                     const isDir = fs[fullChildPath];
-                    return isDir ? '<span class="cmd-out-help">[DIR] ' + child + '</span>' : child;
+                    return isDir ? '[DIR] ' + child : child;
                 }).join('\n');
             }
             const fileName = target.split('\\').pop();
             if (fileContentMap[fileName]) return fileName;
-            return '<span class="cmd-out-error">Get-ChildItem : Cannot find path \'' + pathArg + '\' because it does not exist.</span>';
+            return 'Get-ChildItem : Cannot find path \'' + pathArg + '\' because it does not exist.';
         },
         'Set-Location': (args) => {
             const path = args[0];
@@ -321,18 +340,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     return 'Opening post...';
                 }
                 if (fs[absolute] && fs[absolute].type === 'dir') { currentDir = absolute; }
-                else { return '<span class="cmd-out-error">Set-Location : Cannot find path \'' + path + '\' because it does not exist.</span>'; }
+                else { return 'Set-Location : Cannot find path \'' + path + '\' because it does not exist.'; }
             }
             promptDisplay.textContent = 'PS ' + currentDir + '>';
             return '';
         },
         'Get-Content': (args) => {
             const path = args[0];
-            if (!path) return '<span class="cmd-out-error">Get-Content : Missing path.</span>';
+            if (!path) return 'Get-Content : Missing path.';
             const absolute = resolvePath(path);
             const fileName = absolute.split('\\').pop();
             if (fileContentMap[fileName]) return fileContentMap[fileName];
-            return '<span class="cmd-out-error">Get-Content : Cannot find path \'' + path + '\' because it does not exist.</span>';
+            return 'Get-Content : Cannot find path \'' + path + '\' because it does not exist.';
         }
     };
 
@@ -406,13 +425,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const cmd = aliases[inputCmd.toLowerCase()] || Object.keys(commands).find(c => c.toLowerCase() === inputCmd.toLowerCase());
         const args = parts.slice(1);
         const line = document.createElement('div');
-        line.innerHTML = '<span class="terminal-prompt">PS ' + currentDir + '></span> ' + raw;
+        const linePrompt = document.createElement('span');
+        linePrompt.className = 'terminal-prompt';
+        linePrompt.textContent = 'PS ' + currentDir + '> ';
+        line.appendChild(linePrompt);
+        line.appendChild(document.createTextNode(raw));
         output.appendChild(line);
         if (cmd && commands[cmd]) {
             const res = commands[cmd](args);
             if (res) {
                 const resLine = document.createElement('div');
-                resLine.innerHTML = res.replace(/\n/g, '<br>');
+                resLine.textContent = res;
                 output.appendChild(resLine);
             }
         } else if (raw) {
@@ -424,6 +447,5 @@ document.addEventListener('DOMContentLoaded', () => {
         input.value = '';
         body.scrollTop = body.scrollHeight;
     }
-    body.addEventListener('click', () => input.focus());
 });
 </script>

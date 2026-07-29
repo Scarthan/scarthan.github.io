@@ -31,7 +31,7 @@ layout: default
           {% endfor %}
         </div>
 
-        {{ post.excerpt | strip_html | lstrip | truncatewords: 40, "" }}<a href="{{ post.url | relative_url }}">&hellip; read more &raquo;</a>
+        {{ post.excerpt | strip_html | lstrip | truncatewords: 40, "" }}<a class="read-more" href="{{ post.url | relative_url }}">&hellip; read more &raquo;</a>
       </li>
     {% endfor %}
   </ul>

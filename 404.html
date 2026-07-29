@@ -8,12 +8,26 @@ layout: default
     margin: 10px auto;
     max-width: 600px;
     text-align: center;
+    color: var(--text-color);
   }
   h1 {
     margin: 30px 0;
     font-size: 4em;
     line-height: 1;
     letter-spacing: -1px;
+  }
+  .recent-posts {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+  .recent-posts li {
+    margin-bottom: 10px;
+  }
+  hr {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 40px 0;
   }
 </style>
 
@@ -26,7 +40,7 @@ layout: default
   <hr>
   
   <h3>While you're here, check out some recent posts:</h3>
-  <ul style="list-style: none; padding: 0;">
+  <ul class="recent-posts">
     {% for post in site.posts limit:5 %}
       <li>
         <a href="{{ post.url | relative_url }}">{{ post.title }}</a>

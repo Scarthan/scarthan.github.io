@@ -26,6 +26,7 @@ The concept is simple:
 
 Save the following script as `SuperPaste.ps1`.
 
+{% raw %}
 ```powershell
 # Give you a moment to click into the target window
 Start-Sleep -Seconds 2
@@ -33,14 +34,21 @@ Start-Sleep -Seconds 2
 # Get the clipboard content
 $clip = Get-Clipboard
 
-# Sanitize special characters for SendKeys
-# SendKeys has special meanings for characters like +, ^, %, ~, etc.
-# We wrap them in braces {} so they are treated as literal text.
-$sanitizedChars = $clip.ToCharArray() | ForEach-Object {
-    if ($_ -match "['^' + '%' '~' '(' ')' '\[ '\]' '{' '}']") {
-        "{$_}"
-    } else {
-        $_
+# Escape characters that have special meaning to WScript.SendKeys.
+$escapedKeys = foreach ($character in $clip.ToCharArray()) {
+    switch ($character) {
+        "`r" { continue }
+        "`n" { "{ENTER}"; continue }
+        "`t" { "{TAB}"; continue }
+        "{"  { "{{}"; continue }
+        "}"  { "{}}"; continue }
+        default {
+            if ("+^%~()[]".Contains($character)) {
+                "{$character}"
+            } else {
+                [string]$character
+            }
+        }
     }
 }
 
@@ -48,16 +56,17 @@ $sanitizedChars = $clip.ToCharArray() | ForEach-Object {
 $wshell = New-Object -ComObject wscript.shell
 
 # Type out each character
-foreach ($char in $sanitizedChars) {
-    $wshell.SendKeys($char)
+foreach ($key in $escapedKeys) {
+    $wshell.SendKeys($key)
 }
 ```
+{% endraw %}
 
 **How it works:**
 *   `Start-Sleep -Seconds 2`: This critical pause gives you time to switch focus from your host machine to the target VM console window.
 *   `Get-Clipboard`: Grabs whatever text you currently have copied.
-*   `ToCharArray() | ForEach-Object`: Iterates through every character. If it finds a special character (like `^` which represents CTRL, or `+` which represents SHIFT), it wraps it in curly braces so `SendKeys` types it literally instead of executing it as a command.
-*   `$wshell.SendKeys($char)`: Simulates a physical keystroke for each character.
+*   The `switch` converts line breaks and tabs to SendKeys tokens and escapes characters such as `^`, `+`, `{`, and `}`.
+*   `$wshell.SendKeys($key)`: Simulates a physical keystroke for each escaped token.
 
 ### 2. The Launcher (Batch File)
 
@@ -88,3 +97,9 @@ The final piece of the puzzle is binding this to a keyboard shortcut so you can 
 4.  **Wait 2 seconds**... and watch as your text is magically typed out for you!
 
 This simple workaround bridges the gap between secure, isolated environments and your local productivity, saving you from the tedium of manual data entry.
+
+## Safety notes
+
+This simulates keyboard input; it does not create a network connection or defeat an air gap. The destination receives the clipboard text as though it had been typed manually.
+
+Verify that the intended window has focus before the delay expires. Avoid using this with passwords, tokens, private keys, or commands that execute immediately: focus can change, keyboard layouts can differ, and some consoles interpret special key sequences differently. Test with harmless text before relying on it.

@@ -8,7 +8,6 @@ tags: [short story, random]
 excerpt: The Titan of Enceladus has been found.
 permalink: "/titan-of-enceladus/"
 ---
-# The Titan of Enceladus
 
 ![The Titan of Enceladus]({{ site.baseurl }}/assets/Titan.jpg)
 

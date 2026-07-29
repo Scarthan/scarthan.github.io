@@ -15,15 +15,15 @@ permalink: /tags/
         </p>
     <h2>Posts by tags</h2>
     {% for tag in sorted_tags %}
-        <div id="{{ tag[0] | slugify }}">
-            <h3>{{ tag[0] }}</h3>
+        <section id="{{ tag[0] | slugify }}" class="tag-section">
+            <h3>{{ tag[0] | escape }}</h3>
+            <ul>
             {% for post in tag[1] %}
-                <ul>
-                    <p>
-                        <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
-                    </p>
-                </ul>
+                <li>
+                    <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a>
+                </li>
             {% endfor %}
-        </div>
+            </ul>
+        </section>
     {% endfor %}
 </div>
