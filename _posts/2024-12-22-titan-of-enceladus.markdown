@@ -6,10 +6,11 @@ comments: false
 categories: random
 tags: [short story, random]
 excerpt: The Titan of Enceladus has been found.
+image: /assets/titan-web.jpg
 permalink: "/titan-of-enceladus/"
 ---
 
-![The Titan of Enceladus]({{ site.baseurl }}/assets/Titan.jpg)
+<img src="{{ '/assets/titan-web.jpg' | relative_url }}" alt="The Titan of Enceladus" width="1024" height="1024" decoding="async">
 
 ## The Discovery
 

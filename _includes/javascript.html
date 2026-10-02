@@ -6,6 +6,7 @@
   var resultsContainer = document.getElementById('results-container');
   var searchStatus = document.getElementById('search-status');
   var searchIndex = [];
+  var searchLoaded = false;
 
   function setSearchStatus(message) {
     searchStatus.textContent = message;
@@ -45,24 +46,16 @@
     setSearchStatus(results.length + (results.length === 1 ? ' result' : ' results'));
   }
 
-  fetch('{{ "/search.json" | relative_url }}')
-    .then(function (response) {
-      if (!response.ok) throw new Error('Search index unavailable');
-      return response.json();
-    })
-    .then(function (posts) {
-      searchIndex = posts;
-    })
-    .catch(function () {
-      searchInput.disabled = true;
-      searchInput.placeholder = 'Search unavailable';
-      setSearchStatus('Search is temporarily unavailable');
-    });
-
-  searchInput.addEventListener('input', function () {
+  function updateSearchResults() {
     var query = searchInput.value.trim().toLocaleLowerCase();
     if (!query) {
       renderSearchResults([]);
+      return;
+    }
+
+    if (!searchLoaded) {
+      resultsContainer.hidden = true;
+      setSearchStatus('Loading search results');
       return;
     }
 
@@ -75,7 +68,26 @@
     }).slice(0, 10);
 
     renderSearchResults(matches);
-  });
+  }
+
+  fetch('{{ "/search.json" | relative_url }}')
+    .then(function (response) {
+      if (!response.ok) throw new Error('Search index unavailable');
+      return response.json();
+    })
+    .then(function (posts) {
+      searchIndex = posts;
+      searchLoaded = true;
+      updateSearchResults();
+    })
+    .catch(function () {
+      searchInput.disabled = true;
+      searchInput.placeholder = 'Search unavailable';
+      resultsContainer.hidden = true;
+      setSearchStatus('Search is temporarily unavailable');
+    });
+
+  searchInput.addEventListener('input', updateSearchResults);
 
   searchInput.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
@@ -127,7 +139,11 @@
     var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     var nextTheme = isDark ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', nextTheme);
-    localStorage.setItem('theme', nextTheme);
+    try {
+      localStorage.setItem('theme', nextTheme);
+    } catch (error) {
+      // The theme still changes for this page when storage is unavailable.
+    }
     updateThemeButton();
   });
 

@@ -30,5 +30,20 @@ jobs:
       - name: Validate rendered site
         run: bundle exec ruby scripts/validate_site.rb _site
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install browser test dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Test site interactions
+        run: npm test
+
       - name: Run Lighthouse quality gates
         run: npx --yes @lhci/cli@0.15.x autorun --config=lighthouserc.json

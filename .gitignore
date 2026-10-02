@@ -6,6 +6,8 @@ vendor/
 .bundle/
 .lighthouseci/
 node_modules/
+playwright-report/
+test-results/
 coverage/
 tmp/
 .env
